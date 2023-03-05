@@ -1,92 +1,37 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs/promises');
+const path = require('node:path');
 
-// MADE DIRECTORY_____________________________________________________________________
+const worker = async () => {
+    try {
+        const fileName = ['fileName1.txt', 'fileName2.txt', 'fileName3.txt', 'fileName4.txt', 'fileName5.txt'];
+        const folderName = ['folderName1', 'folderName2', 'folderName3', 'folderName4', 'folderName5'];
 
-// fs.mkdir(path.join('mainFolder','folder1'), (err)=>{
-// if (err) throw new Error()
-// });
-//
-// fs.mkdir(path.join('mainFolder','folder2'), (err)=>{
-// if (err) throw new Error()
-// });
+        const promises = folderName.map(async (folderName, index) => {
+            const folderPath = path.join(process.cwd(), folderName)
 
-// fs.mkdir(path.join('mainFolder','folder3'), (err)=>{
-//     if (err) throw new Error()
-// });
-//
-// fs.mkdir(path.join('mainFolder','folder4'), (err)=>{
-//     if (err) throw new Error()
-// });
-//
-// fs.mkdir(path.join('mainFolder','folder5'), (err)=>{
-//     if (err) throw new Error()
-// });
-//
-//
+            await fs.mkdir(folderPath, {recursive: true})
+            await fs.writeFile(path.join(folderPath, fileName[index]), 'Hello okten')
 
+        })
 
-// MADE  FILES INSIDE SUBDIRECTORY________________________________________________________________
+        await Promise.all(promises)
 
-// fs.writeFile(path.join('mainFolder','folder1','file.txt'), 'Hello Okten', (err)=>{
-//     if (err) throw new Error()
-// })
-//
-// fs.writeFile(path.join('mainFolder','folder2','file.txt'), 'Hello Okten', (err)=>{
-//     if (err) throw new Error()
-// })
-//
-// fs.writeFile(path.join('mainFolder','folder3','file.txt'), 'Hello Okten', (err)=>{
-//     if (err) throw new Error()
-// })
-//
-// fs.writeFile(path.join('mainFolder','folder4','file.txt'), 'Hello Okten', (err)=>{
-//     if (err) throw new Error()
-// })
-//
-// fs.writeFile(path.join('mainFolder','folder5','file.txt'), 'Hello Okten', (err)=>{
-//     if (err) throw new Error()
-// })
+        const files = await fs.readdir(path.join(process.cwd()))
 
+        for (const file of files) {
+            const stats = await fs.stat(path.join(process.cwd(), file))
+            const isFile = stats.isFile();
+            if (isFile) {
+                console.log('This is file', path.join(process.cwd(), file))
+            }else {
+                console.log('This is folder', path.join(process.cwd(), file));
+            }
+        }
 
-// MADE mainDIRECTORIE FILES________________________________________________________________
+    } catch (e) {
+        console.log(e.message)
+    }
 
-// fs.writeFile(path.join('mainFolder','file1.txt'), 'Hello Okten mainFolder', (err)=>{
-//     if (err) throw new Error()
-// })
-//
-// fs.writeFile(path.join('mainFolder','file2.txt'), 'Hello Okten mainFolder', (err)=>{
-//     if (err) throw new Error()
-// })
-//
-// fs.writeFile(path.join('mainFolder','file3.txt'), 'Hello Okten mainFolder', (err)=>{
-//     if (err) throw new Error()
-// })
-//
-// fs.writeFile(path.join('mainFolder','file4.txt'), 'Hello Okten mainFolder', (err)=>{
-//     if (err) throw new Error()
-// })
-//
-// fs.writeFile(path.join('mainFolder','file5.txt'), 'Hello Okten mainFolder', (err)=>{
-//     if (err) throw new Error()
-// })
+}
 
-
-// GET FILE TYPES________________________________________________________________
-
-// fs.readdir(path.join('mainFolder'), {withFileTypes: true}, (err, data) => {
-//     if (err) throw new Error()
-//     data.forEach(value => {
-//         console.log(value.isFile())
-//     })
-// })
-
-// MADE GITIGNORE FILE_________________________________________________________________
-
-// fs.writeFile(path.join(__dirname,'.gitignore'), '.idea', err => {
-//     if (err) throw new Error()
-// })
-
-// fs.appendFile(path.join(__dirname, '.gitignore'), '\nNodeJS-modulle.iml', err => {
-//     if (err) throw new Error()
-// })
+worker()
