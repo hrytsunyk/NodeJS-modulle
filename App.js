@@ -9,7 +9,8 @@ app.use(express.urlencoded({extended: true}));
 
 
 app.get('/users', async (req, res) => {
-
+const users = await fsService.reader();
+res.json(users)
 })
 
 // //
@@ -17,9 +18,17 @@ app.get('/users', async (req, res) => {
 //
 // })
 //
-// app.post('/users', async (req, res) => {
-//
-// })
+app.post('/users', async (req, res) => {
+    const users = await fsService.reader();
+    const user = req.body;
+    console.log(user)
+    await fsService.writer(user)
+
+    res.json({
+        message: 'User created!'
+    })
+
+})
 //
 //
 // app.put('/users/:userId', async (req, res) => {
