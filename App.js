@@ -26,7 +26,7 @@ app.post('/users', async (req, res) => {
 
     users.push(newUser);
 
-    await fsService.reader(users);
+    await fsService.writer(users);
 
 
     res.json({
