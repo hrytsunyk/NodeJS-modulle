@@ -19,10 +19,13 @@ res.json(users)
 // })
 //
 app.post('/users', async (req, res) => {
-    const users = await fsService.reader();
+    const usersRead = await fsService.reader();
+    const usersWright = await fsService.reader();
     const {age, name, gender} = req.body;
 
-    await fsService.writer({id: users[users.length - 1]?.id + 1 || 1, name, age, gender})
+    const newUser = usersWright({id: usersRead[usersRead.length - 1]?.id + 1 || 1, name, age, gender});
+
+    usersWright.push(newUser)
 
     res.json({
         message: 'User created!'
