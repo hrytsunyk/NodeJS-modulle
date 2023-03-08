@@ -7,11 +7,11 @@ const reader = async () => {
   const buffer = await fs.readFile(dbPath);
   const data  = buffer.toString();
 
-  return data ? JSON.stringify(data) : []
+  return data ? JSON.parse(data) : []
 }
 
 const writer = async (users) => {
-  const buffer = await fs.writeFile(dbPath, users);
+  const buffer = await fs.writeFile(dbPath, JSON.stringify(users));
 }
 
 module.exports = {
