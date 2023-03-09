@@ -36,12 +36,18 @@ app.post('/users', async (req, res) => {
     })
 
 })
-//
-//
-// app.put('/users/:userId', async (req, res) => {
-//
-//
-// })
+
+
+app.put('/users/:userId', async (req, res) => {
+    const {userId} = req.params;
+    const users = await fsService.reader();
+
+    const index = users.findIndex((users, index) => (userId === index));
+
+    console.log(index)
+
+
+})
 //
 // app.delete('/users/:userId', async (req, res) => {
 //
