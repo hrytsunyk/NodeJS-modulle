@@ -41,17 +41,29 @@ app.post('/users', async (req, res) => {
 app.put('/users/:userId', async (req, res) => {
     const {userId} = req.params;
     const users = await fsService.reader();
+    const updatedUser = req.body;
 
-    const index = users.findIndex((users, index) => (userId === index));
+    users[userId - 1] = updatedUser;
 
-    console.log(index)
+    await fsService.writer(users)
 
-
+    res.json({
+        message: 'user updated'
+    })
 })
 //
-// app.delete('/users/:userId', async (req, res) => {
-//
-// })
+app.delete('/users/:userId', async (req, res) => {
+    const {userId} = req.params;
+    const users = await fsService.reader();
+    const user = users.find(user=> user.id ===userId? user.splice(user,1):[]);
+
+
+    await fsService.writer(users)
+
+    res.json({
+        message: 'user deleted'
+    })
+})
 
 
 app.listen(PORT, () => {
