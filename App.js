@@ -22,6 +22,8 @@ app.post('/users', async (req, res) => {
     const users = await fsService.reader();
     const {age, name, gender} = req.body;
 
+    console.log(users)
+
     const newUser = {id: users[users.length - 1]?.id + 1 || 1, name, age, gender};
 
     users.push(newUser);
