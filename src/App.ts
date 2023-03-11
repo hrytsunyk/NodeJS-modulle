@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 
 import { User } from "./models/User.model";
+import { IUser } from "./types/user.types.ts/user.types";
 
 const app = express();
 const PORT = 5100;
@@ -15,53 +16,69 @@ app.get("/welcome", (req, res) => {
   res.end();
 });
 
-app.get("/users", async (req: Request, res: Response) => {
-  const users = await User.find();
-  res.json(users);
-});
-
-// app.get("/users/:userId", (req, res) => {
-//   const { userId } = req.params;
-//
-//   const user = users[+userId - 1];
-//
-//   res.send(user);
-// });
-//
-app.post("/users", async (req, res) => {
-  try {
-        const body = req.body;
-    const user = await User.create({ ...body });
-    res.status(201).json({
-      data: user,
-      message: "user created",
-    });
-  } catch (e) {
-    console.log(e);
+app.get(
+  "/users",
+  async (req: Request, res: Response): Promise<Response<IUser[]>> => {
+    const users = await User.find();
+    return res.json(users);
   }
-});
+);
+
+app.get(
+  "/users/:userId",
+  async (req: Request, res: Response): Promise<Response<IUser>> => {
+    const { userId } = req.params;
+
+    const user = await User.findById({ _id: userId });
+    return res.send(user);
+  }
+);
+
+app.post(
+  "/users",
+  async (req: Request, res: Response): Promise<Response<IUser>> => {
+    try {
+      const body = req.body;
+      const user = await User.create({ ...body });
+      return res.status(201).json({
+        message: "user created",
+        data: user,
+      });
+    } catch (e) {
+      res.json({
+        message: e.message,
+      });
+    }
+  }
+);
 //
-// app.put("/users/:userId", (req, res) => {
-//   const { userId } = req.params;
-//   const updatedUser = req.body;
-//
-//   users[+userId - 1] = updatedUser;
-//
-//   res.status(200).json({
-//     message: "user updated",
-//     data: users[+userId - 1],
-//   });
-// });
-//
-// app.delete("/users/:userId", (req, res) => {
-//   const { userId } = req.params;
-//
-//   users.splice(+userId - 1, 1);
-//
-//   res.status(200).json({
-//     message: "User deleted!",
-//   });
-// });
+app.put(
+  "/users/:userId",
+  async (req: Request, res: Response): Promise<Response<IUser>> => {
+    const { userId } = req.params;
+    const user = req.body;
+
+    const updatedUser = await User.updateOne({ _id: userId }, user);
+
+    return res.status(200).json({
+      message: "user updated",
+      data: updatedUser,
+    });
+  }
+);
+
+app.delete(
+  "/users/:userId",
+  async (req: Request, res: Response): Promise<Response<IUser>> => {
+    const { userId } = req.params;
+
+    await User.deleteOne({ _id: userId });
+
+    return res.status(200).json({
+      message: "User deleted!",
+    });
+  }
+);
 
 const dataBase =
   "mongodb+srv://hrytsunyk:hrytsunyk@cluster0.vh7aabd.mongodb.net/?retryWrites=true&w=majority";
