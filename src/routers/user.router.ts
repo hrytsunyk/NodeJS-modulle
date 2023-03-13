@@ -1,60 +1,19 @@
 import { Request, Response, Router } from "express";
 
+import { UserController1 } from "../controllers/user.controller";
+import { userMiddleware } from "../middlewares/user.middleware";
 import { User } from "../models/User.model";
 import { IUser } from "../types/user.types.ts/user.types";
 
 const router = Router();
 
-router.get(
-  "/users",
-  async (req: Request, res: Response): Promise<Response<IUser[]>> => {
-    const users = await User.find();
-    return res.json(users);
-  }
-);
+router.get("/", UserController1.getAll);
 
-router.get(
-  "/users/:userId",
-  async (req: Request, res: Response): Promise<Response<IUser>> => {
-    const { userId } = req.params;
+router.get("/:userId", userMiddleware.getByIdAndThrow, UserController1.getByID);
 
-    const user = await User.findById({ _id: userId });
-    return res.send(user);
-  }
-);
-
-router.post(
-  "/users",
-  async (req: Request, res: Response): Promise<Response<IUser>> => {
-    try {
-      const body = req.body;
-      const user = await User.create({ ...body });
-      return res.status(201).json({
-        message: "user created",
-        data: user,
-      });
-    } catch (e) {
-      res.json({
-        message: e.message,
-      });
-    }
-  }
-);
+router.post("/", UserController1.create);
 //
-router.put(
-  "/users/:userId",
-  async (req: Request, res: Response): Promise<Response<IUser>> => {
-    const { userId } = req.params;
-    const user = req.body;
-
-    const updatedUser = await User.updateOne({ _id: userId }, user);
-
-    return res.status(200).json({
-      message: "user updated",
-      data: updatedUser,
-    });
-  }
-);
+router.put("/:userId", UserController1.update);
 
 router.delete(
   "/users/:userId",

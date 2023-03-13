@@ -1,2 +1,5 @@
 .idea
 NodeJS-modulle.iml
+
+.env
+.env.*

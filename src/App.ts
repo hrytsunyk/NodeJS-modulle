@@ -1,6 +1,7 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 
+import { configs } from "./configs/configs";
 import { userRouter } from "./routers/user.router";
 
 const app = express();
@@ -11,10 +12,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", userRouter);
 
-const dataBase =
-  "mongodb+srv://hrytsunyk:hrytsunyk@cluster0.vh7aabd.mongodb.net/?retryWrites=true&w=majority";
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  res.json({
+    message: err.message,
+  });
+});
 
-app.listen(PORT, () => {
-  mongoose.connect(dataBase);
+app.listen(configs.PORT, () => {
+  mongoose.connect(configs.DB_URL);
   console.log(`Server runs on PORT ${PORT} 🌝️`);
 });
