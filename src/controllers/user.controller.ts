@@ -57,10 +57,13 @@ class UserController {
   ): Promise<Response<ICommonResponse<IUser>>> {
     try {
       const { userId } = req.params;
-      const user = req.body;
-      const updatedUser = await User.updateOne({ _id: userId }, user);
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { ...req.body },
+        { new: true }
+      );
 
-      return res.status(200).json({
+      return res.status(201).json({
         message: "user updated",
         data: updatedUser,
       });
@@ -78,7 +81,7 @@ class UserController {
       const { userId } = req.params;
       await User.deleteOne({ _id: userId });
 
-      return res.status(200).json({
+      return res.sendStatus(204).json({
         message: "User deleted!",
       });
     } catch (e) {

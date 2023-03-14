@@ -8,18 +8,20 @@ export class UserValidators {
   private static email = Joi.string()
     .regex(regexConstants.EMAIL)
     .lowercase()
-    .trim()
+    .trim();
 
   private static password = Joi.string()
     .regex(regexConstants.PASSWORD)
     .required();
   private static gender = Joi.valid(...Object.values(Egenders));
+  private static age = Joi.number().min(18).max(100);
 
   static createUser = Joi.object({
     name: this.firstName.required(),
     email: this.email.required(),
     password: this.password.required(),
     gender: this.gender.required(),
+    age: this.age.required(),
   });
   static updateUser = Joi.object({
     name: this.firstName,

@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import { isObjectIdOrHexString } from "mongoose";
 
 import { ApiError } from "../errors/api.error";
 import { User } from "../models/User.model";
+import { UserValidators } from "../validators";
 
 class UserMiddleware {
   public async getByIdAndThrow(
@@ -21,15 +23,17 @@ class UserMiddleware {
     }
   }
 
-  public async getAllAndThrow(
+  public async isUserValidCreate(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const users = await User.find();
-      if (!users) {
-        throw new ApiError("Could not find users. Create new user!", 404);
+      const { error, value } = UserValidators.createUser.validate(req.body);
+
+      req.body = value;
+      if (error) {
+        throw new ApiError(error.message, 400);
       }
       next();
     } catch (e) {
@@ -37,6 +41,38 @@ class UserMiddleware {
     }
   }
 
+  public async isUserValidUpdate(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { error, value } = UserValidators.updateUser.validate(req.body);
+
+      req.body = value;
+      if (error) {
+        throw new ApiError(error.message, 400);
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async isUserIdValid(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!isObjectIdOrHexString(req.params.userId)) {
+        throw new ApiError("ID not valid", 400);
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const userMiddleware = new UserMiddleware();
