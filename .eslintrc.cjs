@@ -6,6 +6,6 @@ module.exports = {
     rules: {
         "no-unused-vars": ["error", {argsIgnorePattern:"reg|res|next"}],
         'simple-import-sort/imports':'error',
-        'simple-import-sort/export':'error'
+        'simple-import-sort/exports':'error'
     }
 };

@@ -1,7 +1,7 @@
-import { NextFunction, Request } from "express";
+import { NextFunction, Request, Response } from "express";
 
+import { ApiError } from "../errors/api.error";
 import { User } from "../models/User.model";
-import {ApiErrors} from "../errors/api.errors";
 
 class UserMiddleware {
   public async getByIdAndThrow(
@@ -11,17 +11,32 @@ class UserMiddleware {
   ): Promise<void> {
     try {
       const { userId } = req.params;
-
       const user = await User.findById(userId);
-
       if (!user) {
-        throw new ApiErrors("User not found", 404);
+        throw new ApiError("User not found", 404);
       }
       next();
     } catch (e) {
       next(e);
     }
   }
+
+  public async getAllAndThrow(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const users = await User.find();
+      if (!users) {
+        throw new ApiError("Could not find users. Create new user!", 404);
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
 }
 
 export const userMiddleware = new UserMiddleware();

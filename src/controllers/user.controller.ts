@@ -1,52 +1,89 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import { User } from "../models/User.model";
 import { ICommonResponse, IUser } from "../types/user.types.ts/user.types";
 
 class UserController {
-  public async getAll(req: Request, res: Response): Promise<Response<IUser[]>> {
-    const users = await User.find();
-    return res.json(users);
+  public async getAll(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<IUser[]>> {
+    try {
+      const users = await User.find();
+      return res.json(users);
+    } catch (e) {
+      next(e);
+    }
   }
 
-  public async getByID(req: Request, res: Response): Promise<Response<IUser>> {
-    const { userId } = req.params;
+  public async getByID(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<IUser>> {
+    try {
+      const { userId } = req.params;
+      const user = await User.findById(userId);
 
-    const user = await User.findById({ _id: userId });
-    return res.send(user);
+      return res.json(user);
+    } catch (e) {
+      next(e);
+    }
   }
 
   public async create(
     req: Request,
-    res: Response
+    res: Response,
+    next: NextFunction
   ): Promise<Response<ICommonResponse<IUser>>> {
     try {
       const body = req.body;
       const user = await User.create({ ...body });
+
       return res.status(201).json({
         message: "user created",
         data: user,
       });
     } catch (e) {
-      res.json({
-        message: e.message,
-      });
+      next(e);
     }
   }
 
   public async update(
     req: Request,
-    res: Response
+    res: Response,
+    next: NextFunction
   ): Promise<Response<ICommonResponse<IUser>>> {
-    const { userId } = req.params;
-    const user = req.body;
+    try {
+      const { userId } = req.params;
+      const user = req.body;
+      const updatedUser = await User.updateOne({ _id: userId }, user);
 
-    const updatedUser = await User.updateOne({ _id: userId }, user);
+      return res.status(200).json({
+        message: "user updated",
+        data: updatedUser,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
 
-    return res.status(200).json({
-      message: "user updated",
-      data: updatedUser,
-    });
+  public async delete(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<IUser>> {
+    try {
+      const { userId } = req.params;
+      await User.deleteOne({ _id: userId });
+
+      return res.status(200).json({
+        message: "User deleted!",
+      });
+    } catch (e) {
+      next(e);
+    }
   }
 }
 

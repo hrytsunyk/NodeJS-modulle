@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import { configs } from "./configs/configs";
 import { userRouter } from "./routers/user.router";
+import { IError } from "./types/common.types";
 
 const app = express();
 const PORT = 5100;
@@ -12,9 +13,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", userRouter);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.json({
+app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
+  const status = err.status;
+  res.status(status).json({
     message: err.message,
+    status,
   });
 });
 
