@@ -110,9 +110,9 @@ class UserMiddleware {
   }
 
   public async isUserValidLogin(
-      req: Request,
-      res: Response,
-      next: NextFunction
+    req: Request,
+    res: Response,
+    next: NextFunction
   ): Promise<void> {
     try {
       const { error } = UserValidators.loginUser.validate(req.body);

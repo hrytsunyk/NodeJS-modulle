@@ -1,11 +1,11 @@
 import { ApiError } from "../errors/api.error";
+import { Token } from "../models/Token.model";
 import { User } from "../models/User.model";
 import { ICredentials } from "../types/auth.types";
 import { ITokenPair } from "../types/token.interface";
 import { IUser } from "../types/user.types.ts/user.types";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.servise";
-import {Token} from "../models/Token.model";
 
 class AuthService {
   public async register(body: IUser): Promise<void> {
@@ -39,8 +39,8 @@ class AuthService {
 
       await Token.create({
         _user_id: user._id,
-        ...tokenPair
-      })
+        ...tokenPair,
+      });
 
       return tokenPair;
     } catch (e) {

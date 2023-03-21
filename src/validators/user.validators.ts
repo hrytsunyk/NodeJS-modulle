@@ -29,7 +29,7 @@ export class UserValidators {
   });
 
   static loginUser = Joi.object({
-  email: this.email.required(),
-    password: this.password.required()
-  })
+    email: this.email.required(),
+    password: this.password.required(),
+  });
 }
