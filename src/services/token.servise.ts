@@ -1,10 +1,11 @@
 import * as jwt from "jsonwebtoken";
 
 import { ITokenPayload } from "../types/token.interface";
+import {tokenConstants} from "../constants/token.constants";
 class TokenServise {
   public generateTokenPair(payload: ITokenPayload) {
-    const accessToken = jwt.sign(payload, "JWT_ACCESS", { expiresIn: "15m" });
-    const refreshToken = jwt.sign(payload, "JWT_REFRESH", { expiresIn: "15d" });
+    const accessToken = jwt.sign(payload, tokenConstants.ACCESS_SECRET, { expiresIn: "15m" });
+    const refreshToken = jwt.sign(payload, tokenConstants.REFRESH_SECRET, { expiresIn: "15d" });
 
     return {
       accessToken,
