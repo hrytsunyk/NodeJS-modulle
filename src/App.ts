@@ -7,7 +7,7 @@ import { userRouter } from "./routers/user.router";
 import { IError } from "./types/common.types";
 
 const app = express();
-const PORT = 5100;
+// const PORT = 5100;
 //
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -26,5 +26,5 @@ app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
 
 app.listen(configs.PORT, () => {
   mongoose.connect(configs.DB_URL);
-  console.log(`Server runs on PORT ${PORT} 🌝️`);
+  console.log(`Server runs on PORT ${configs.PORT} 🌝️`);
 });

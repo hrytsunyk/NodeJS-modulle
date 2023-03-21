@@ -8,6 +8,7 @@ export enum Egenders {
 }
 
 export interface IUser {
+  _id?: string;
   name: string;
   age: number;
   gender: string;
