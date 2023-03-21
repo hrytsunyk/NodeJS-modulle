@@ -14,6 +14,7 @@ router.post(
 
 router.post(
   "/login",
+  userMiddleware.isUserValidLogin,
   userMiddleware.getDynamicallyorThrow("email"),
   authController.login
 );

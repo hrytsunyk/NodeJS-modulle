@@ -5,6 +5,7 @@ import { ITokenPair } from "../types/token.interface";
 import { IUser } from "../types/user.types.ts/user.types";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.servise";
+import {Token} from "../models/Token.model";
 
 class AuthService {
   public async register(body: IUser): Promise<void> {
@@ -31,10 +32,16 @@ class AuthService {
         throw new ApiError("Invalid email or password", 400);
       }
 
-      const tokenPair = tokenService.generateTikenPair({
+      const tokenPair = tokenService.generateTokenPair({
         name: user.name,
         id: user._id,
       });
+
+      await Token.create({
+        _user_id: user._id,
+        ...tokenPair
+      })
+
       return tokenPair;
     } catch (e) {
       throw new ApiError(e.message, e.status);
